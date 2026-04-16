@@ -302,8 +302,8 @@ const Home = () => {
             }
 
             // Use first image as default, second as hover (or fall back to first)
-            const defaultImage = getImageUrl(images[0] || product.imagePath) || '/assets/imgs/shop/product-1-1.jpg';
-            const hoverImage = getImageUrl(images[1] || images[0] || product.imagePath) || '/assets/imgs/shop/product-1-2.jpg';
+            const defaultImage = getImageUrl(images[0] || product.imagePath) || getUnsplashFallback(index);
+            const hoverImage = getImageUrl(images[1] || images[0] || product.imagePath) || getUnsplashFallback(index + 1);
 
             return {
               id: product.id,
@@ -797,7 +797,7 @@ const Home = () => {
                                   name: product.name,
                                   productName: product.name,
                                   price: product.price,
-                                  image: product.image || '/assets/imgs/shop/product-1-1.jpg',
+                                  image: product.image || getUnsplashFallback(index + 20),
                                   quantity: 1,
                                   stock: product.quantity || 999
                                 });
@@ -970,7 +970,7 @@ const Home = () => {
                                   name: product.name,
                                   productName: product.name,
                                   price: product.price,
-                                  image: product.image || '/assets/imgs/shop/product-1-1.jpg',
+                                  image: product.image || getUnsplashFallback(index + 120),
                                   quantity: 1,
                                   stock: product.quantity || 999
                                 });
@@ -1024,7 +1024,7 @@ const Home = () => {
                               <div className="product-content-wrap">
                                 <h2><Link to={`/shop-product-right?id=${product.id}`}>{product.name}</Link></h2>
                                 <div className="product-price mt-10"><span>{product.price}</span></div>
-                                <button type="button" className="btn w-100 hover-up" onClick={(e) => { e.preventDefault(); addToCart({ id: product.id, name: product.name, productName: product.name, price: product.price, image: product.image || '/assets/imgs/shop/product-1-1.jpg', quantity: 1, stock: product.quantity || 999 }); }}><i className="fi-rs-shopping-cart mr-5"></i>Add To Cart</button>
+                                <button type="button" className="btn w-100 hover-up" onClick={(e) => { e.preventDefault(); addToCart({ id: product.id, name: product.name, productName: product.name, price: product.price, image: product.image || getUnsplashFallback(index + 220), quantity: 1, stock: product.quantity || 999 }); }}><i className="fi-rs-shopping-cart mr-5"></i>Add To Cart</button>
                               </div>
                             </div>
                           ))}
@@ -1071,7 +1071,7 @@ const Home = () => {
                               <div className="product-content-wrap">
                                 <h2><Link to={`/shop-product-right?id=${product.id}`}>{product.name}</Link></h2>
                                 <div className="product-price mt-10"><span>{product.price}</span></div>
-                                <button type="button" className="btn w-100 hover-up" onClick={(e) => { e.preventDefault(); addToCart({ id: product.id, name: product.name, productName: product.name, price: product.price, image: product.image || '/assets/imgs/shop/product-1-1.jpg', quantity: 1, stock: product.quantity || 999 }); }}><i className="fi-rs-shopping-cart mr-5"></i>Add To Cart</button>
+                                <button type="button" className="btn w-100 hover-up" onClick={(e) => { e.preventDefault(); addToCart({ id: product.id, name: product.name, productName: product.name, price: product.price, image: product.image || getUnsplashFallback(index + 320), quantity: 1, stock: product.quantity || 999 }); }}><i className="fi-rs-shopping-cart mr-5"></i>Add To Cart</button>
                               </div>
                             </div>
                           ))}
@@ -1143,7 +1143,7 @@ const Home = () => {
                                 name: product.name,
                                 productName: product.name,
                                 price: product.price,
-                                image: product.image || '/assets/imgs/shop/product-1-1.jpg',
+                                image: product.image || getUnsplashFallback(index + 420),
                                 quantity: 1,
                                 stock: product.quantity || 999
                               });
@@ -1180,7 +1180,7 @@ const Home = () => {
                             src={productImage} 
                             alt={product.name || 'Product'}
                             onError={(e) => {
-                              e.target.src = '/assets/imgs/shop/product-1-1.jpg';
+                              e.target.src = getUnsplashFallback(index + 520);
                             }}
                           />
                         </Link>
@@ -1217,7 +1217,7 @@ const Home = () => {
                             src={productImage} 
                             alt={product.name || 'Product'}
                             onError={(e) => {
-                              e.target.src = '/assets/imgs/shop/product-1-1.jpg';
+                              e.target.src = getUnsplashFallback(index + 620);
                             }}
                           />
                         </Link>
@@ -1254,7 +1254,7 @@ const Home = () => {
                             src={productImage} 
                             alt={product.name || 'Product'}
                             onError={(e) => {
-                              e.target.src = '/assets/imgs/shop/product-1-1.jpg';
+                              e.target.src = getUnsplashFallback(index + 720);
                             }}
                           />
                         </Link>
@@ -1291,7 +1291,7 @@ const Home = () => {
                             src={productImage} 
                             alt={product.name || 'Product'}
                             onError={(e) => {
-                              e.target.src = '/assets/imgs/shop/product-1-1.jpg';
+                              e.target.src = getUnsplashFallback(index + 820);
                             }}
                           />
                         </Link>

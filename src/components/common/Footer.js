@@ -188,7 +188,7 @@ const Footer = () => {
             <div className="col">
               <div className="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                 <div className="logo mb-30">
-                  <a href="/" className="mb-15"><img src="/assets/imgs/theme/logonew.jpeg" alt="A and U logo" className="brand-logo-image" /></a>
+                  <a href="/" className="mb-15"><img src="/assets/imgs/theme/logo.svg" alt="A and U logo" className="brand-logo-image" /></a>
                   <p className="font-lg text-heading">{footerIntro?.subtitle || 'Awesome grocery store website template'}</p>
                 </div>
                 <ul className="contact-infor">
@@ -281,14 +281,14 @@ const Footer = () => {
               <p className="">From App Store or Google Play</p>
               <div className="download-app">
                 <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2 mb-lg-0">
-                  <img className="active" src="/assets/imgs/theme/app-store.jpg" alt="App Store" />
+                  <img className="active" src="/assets/imgs/theme/icons/logo-apple.svg" alt="App Store" />
                 </a>
                 <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2">
-                  <img src="/assets/imgs/theme/google-play.jpg" alt="Google Play" />
+                  <img src="/assets/imgs/theme/icons/logo-google.svg" alt="Google Play" />
                 </a>
               </div>
               <p className="mb-20">Secured Payment Gateways</p>
-              <img className="" src={getImageUrl(footerIntro?.imageUrl) || '/assets/imgs/theme/payment-method.png'} alt="" />
+              <img className="" src={getImageUrl(footerIntro?.imageUrl) || '/assets/imgs/theme/icons/payment-visa.svg'} alt="" />
             </div>
           </div>
         </div>

@@ -276,10 +276,11 @@ const ShopProductRight = () => {
     }
     // Fallback to default image if no images available
     else {
+      const fallbackImage = getUnsplashFallback(0);
       images.push({
-        hd: '/assets/imgs/shop/product-1-1.jpg',
-        thumbnail: '/assets/imgs/shop/product-1-1.jpg',
-        fallback: '/assets/imgs/shop/product-1-1.jpg'
+        hd: fallbackImage,
+        thumbnail: fallbackImage,
+        fallback: fallbackImage
       });
       console.log('Using fallback image - total images:', images.length);
     }

@@ -212,7 +212,7 @@ const Header = () => {
           <div className="header-wrap">
             <div className="logo logo-width-1">
               <a href="/">
-                <img src="/assets/imgs/theme/logonew.jpeg" alt="A and U logo" className="brand-logo-header-image" />
+                <img src="/assets/imgs/theme/logo.svg" alt="A and U logo" className="brand-logo-header-image" />
               </a>
             </div>
             <div className="header-right">
@@ -464,7 +464,7 @@ const Header = () => {
           <div className="header-wrap header-space-between position-relative">
             <div className="logo logo-width-1 d-block d-lg-none">
               <a href="/">
-                <img src="/assets/imgs/theme/logonew.jpeg" alt="A and U logo" className="brand-logo-header-image" />
+                <img src="/assets/imgs/theme/logo.svg" alt="A and U logo" className="brand-logo-header-image" />
               </a>
             </div>
             <div className="header-nav d-none d-lg-flex">

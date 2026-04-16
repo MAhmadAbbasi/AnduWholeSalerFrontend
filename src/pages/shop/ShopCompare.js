@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCompare } from '../../context/CompareContext';
 import { useCart } from '../../context/CartContext';
-import { getImageUrl } from '../../utils/imageUtils';
+import { getImageUrl, getUnsplashFallback } from '../../utils/imageUtils';
 
 const ShopCompare = () => {
   const { compareItems, removeFromCompare, clearCompare, loading } = useCompare();
@@ -102,7 +102,7 @@ const ShopCompare = () => {
                           return (
                             <td className="row_img" key={item.id}>
                               <img 
-                                src={getImageUrl(imagePath) || '/assets/imgs/shop/product-1-1.jpg'} 
+                                src={getImageUrl(imagePath) || getUnsplashFallback(0)} 
                                 alt={productName}
                                 style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                               />

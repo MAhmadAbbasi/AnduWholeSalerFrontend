@@ -75,7 +75,7 @@
                 var _origSlick = $.fn.slick;
                 $.fn.slick = function() {
                     try {
-                        if (window.reactCarouselInit) {
+                        if (window.reactCarouselInit || window.preventSlickAutoInit) {
                             return this; // no-op when React will initialize carousels
                         }
                         return _origSlick.apply(this, arguments);
@@ -87,7 +87,7 @@
             }
         })();
         // Skip global slick initialization when React handles carousels
-        if (!window.reactCarouselInit) {
+        if (!window.reactCarouselInit && !window.preventSlickAutoInit) {
     $(".hero-slider-1").slick({
         slidesToShow: 1,
         slidesToScroll: 1,

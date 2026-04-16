@@ -4,6 +4,7 @@
 body, html {
   overflow-x: hidden !important;
   max-width: 100vw !important;
+  scroll-behavior: smooth;
 }
 
 /* Ensure React root takes full height */
@@ -11,6 +12,12 @@ body, html {
   min-height: 100vh;
   overflow-x: hidden !important;
   max-width: 100vw !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Make button elements styled like links for footer and other places */

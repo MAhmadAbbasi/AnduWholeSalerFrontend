@@ -25,16 +25,7 @@ const unsplashHeroImages = [
 
 // Local clothing images (from assets)
 const localClothingImages = [
-  '/assets/images/08231db713634e96baf664cf7b99d1a5.thumbnail.0000000000_small.jpg',
-  '/assets/images/0dc5821c585f46b9b2192244ced74eac.thumbnail.0000000000_small.jpg',
-  '/assets/images/11108a5f42834d188f6ae9871da852f5.thumbnail.0000000000_small.jpg',
-  '/assets/images/203e2fd074904431bffdbbc76b96c70a.thumbnail.0000000000_small.jpg',
-  '/assets/images/2ef5609901fc4b50baffbe58dadacc7f.thumbnail.0000000000_small.jpg',
-  '/assets/images/36060003164b41e8ae52753cd05a8a5e.thumbnail.0000000000_small.jpg',
-  '/assets/images/3bf561f19c4948dd9b278fbace3d69e7.thumbnail.0000000000_small.jpg',
-  '/assets/images/4a0ce756c34646ae99541a2f32c29df3.thumbnail.0000000000_small.jpg',
-  '/assets/images/4bea482391154b2ebfd55e071391f2d1.thumbnail.0000000000_small.jpg',
-  '/assets/images/5518ffa8ef9b418486d7f52300cf8d45.thumbnail.0000000000_small.jpg'
+  '/assets/images/Ankle_Banner_1944x.jpg'
 ];
 
 /**
@@ -73,11 +64,7 @@ export const getHeroImage = (imagePath, index = 0) => {
   if (!imagePath || imagePath.includes('/assets/imgs/')) {
     // Use local hero images first, then Unsplash
     const localHeroImages = [
-      '/assets/images/women-hero-desktop-2280x1080_300x.jpg',
-      '/assets/images/Men-page-hero-2280X1080-2_300x.jpg',
-      '/assets/images/2280x1080-v2_1_300x.jpg',
-      '/assets/images/Web_Banner-Female-v3_300x.jpg',
-      '/assets/images/Accessories_Web_300x.jpg'
+      '/assets/images/Ankle_Banner_1944x.jpg'
     ];
     return localHeroImages[index % localHeroImages.length] || 
            unsplashHeroImages[index % unsplashHeroImages.length];
@@ -116,7 +103,8 @@ export const getImageUrl = (imagePath) => {
   }
   // Prepend base URL for relative paths
   const baseUrl = 'https://ebizportal.hexalabes.com';
-  return `${baseUrl}${imagePath}`;
+  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  return `${baseUrl}${normalizedPath}`;
 };
 
 // Export arrays for direct use
