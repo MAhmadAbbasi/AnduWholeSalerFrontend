@@ -650,7 +650,7 @@ const Header = () => {
             </div>
             <div className="hotline d-none d-lg-flex">
               <img src="/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
-              <p>1900 - 6666<span>24/7 Support Center</span></p>
+              <p>+1 (512) 355-5036<span>24/7 Support Center</span></p>
             </div>
             <div className="header-action-icon-2 d-block d-lg-none">
               <Link className="mini-cart-icon" to="/shop-cart">
