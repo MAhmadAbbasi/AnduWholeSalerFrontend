@@ -98,7 +98,7 @@ main {
 /* Home page: enforce equal image size in Popular and Daily sections */
 .product-tabs .product-cart-wrap .product-img-action-wrap .product-img,
 .daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img {
-  height: 220px;
+  height: 190px;
   aspect-ratio: auto;
 }
 
@@ -115,7 +115,7 @@ main {
 @media (max-width: 768px) {
   .product-tabs .product-cart-wrap .product-img-action-wrap .product-img,
   .daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img {
-    height: 200px;
+    height: 170px;
   }
 }
 
