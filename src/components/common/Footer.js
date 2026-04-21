@@ -188,7 +188,7 @@ const Footer = () => {
             <div className="col">
               <div className="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                 <div className="logo mb-30">
-                  <a href="/" className="mb-15"><img src="/assets/imgs/theme/logo.svg" alt="A and U logo" className="brand-logo-image" /></a>
+                  <a href="/" className="mb-15"><img src="/assets/imgs/theme/logonew.jpeg" alt="A and U logo" className="brand-logo-image" /></a>
                   <p className="font-lg text-heading">{footerIntro?.subtitle || 'Awesome grocery store website template'}</p>
                 </div>
                 <ul className="contact-infor">
