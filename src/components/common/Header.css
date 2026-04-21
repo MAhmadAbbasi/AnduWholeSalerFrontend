@@ -1216,3 +1216,109 @@
 .search-style-2 form button i {
   font-size: 20px;
 }
+
+/* ---- Header menu compaction (compact nav bar) ---- */
+/* Main top navigation (desktop) */
+.header-area .header-nav .main-menu ul li a {
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+  padding: 4px 6px !important;
+}
+
+.header-area .main-menu ul li.menu-item-has-children > a i {
+  font-size: 7px !important;
+  margin-left: 3px !important;
+}
+
+/* Dropdown panels */
+.header-area .main-menu ul li .sub-menu {
+  padding: 10px 8px !important;
+  margin-top: 8px !important;
+  min-width: 210px !important;
+}
+
+/* Dropdown rows — theme CSS uses large margins; tighten */
+.header-area .main-menu ul li .sub-menu li {
+  margin-bottom: 6px !important;
+}
+
+.header-area .main-menu ul li .sub-menu li:last-child {
+  margin-bottom: 0 !important;
+}
+
+.header-area .main-menu ul li .sub-menu li a {
+  font-size: 12px !important;
+  padding: 3px 8px !important;
+}
+
+.header-area .main-menu ul li .sub-menu li a img {
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 6px !important;
+}
+
+/* Third-level flyout */
+.header-area .main-menu ul li .sub-menu li .level-menu {
+  padding: 12px 0 !important;
+  margin-top: 8px !important;
+  width: 200px !important;
+}
+
+.header-area .main-menu ul li .sub-menu li .level-menu.level-menu-modify {
+  top: -12px !important;
+}
+
+.header-area .main-menu ul li .sub-menu li .level-menu li {
+  margin-bottom: 6px !important;
+}
+
+.header-area .main-menu ul li .sub-menu li .level-menu li a {
+  font-size: 12px !important;
+  padding: 3px 8px !important;
+}
+
+/* “Browse All Categories” button */
+.header-area .categories-button-active {
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 3px 10px !important;
+}
+
+.header-area .categories-button-active .fi-rs-apps {
+  font-size: 13px !important;
+}
+
+.header-area .categories-button-active .fi-rs-angle-down {
+  font-size: 10px !important;
+  margin-left: 4px !important;
+}
+
+/* Category mega-dropdown list links */
+.header-area .categories-dropdown-active-large .categori-dropdown-inner ul li a {
+  font-size: 12px !important;
+  padding: 5px 8px !important;
+}
+
+.header-area .categories-dropdown-active-large .categori-dropdown-inner ul li a img {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 6px !important;
+}
+
+.header-area .categories-dropdown-active-large .more_categories .heading-sm-1 {
+  font-size: 12px !important;
+}
+
+/* Hotline strip on same row — match scale */
+.header-area .header-bottom .hotline p {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+
+.header-area .header-bottom .hotline img {
+  width: 26px !important;
+  height: auto !important;
+}
+

@@ -838,7 +838,7 @@ const Home = () => {
       {/*End product tabs*/}
 
       {/* Daily Best Sells Section */}
-      <section className="section-padding pb-5">
+      <section className="section-padding pb-5 daily-best-sells-section">
         <div className="container">
           <div className="section-title">
             <h3 className="">Daily Best Sells</h3>

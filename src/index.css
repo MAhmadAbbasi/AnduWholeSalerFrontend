@@ -69,6 +69,91 @@ main {
   min-height: 100vh;
 }
 
+/* ---- Product image sizing (prevent huge/tall uploads) ---- */
+/* Enforce a consistent image frame across product grids/carousels */
+.product-cart-wrap .product-img-action-wrap .product-img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+  background: #f7f7f7;
+  border-radius: 10px;
+}
+
+/* Make images fill the frame without stretching layout */
+.product-cart-wrap .product-img-action-wrap .product-img img,
+.product-cart-wrap .product-img-action-wrap .product-img .default-img,
+.product-cart-wrap .product-img-action-wrap .product-img .hover-img {
+  width: 100%;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* If theme uses absolute hover image, keep it contained */
+.product-cart-wrap .product-img-action-wrap .product-img .hover-img {
+  inset: 0;
+}
+
+/* Home page: enforce equal image size in Popular and Daily sections */
+.product-tabs .product-cart-wrap .product-img-action-wrap .product-img,
+.daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img {
+  height: 220px;
+  aspect-ratio: auto;
+}
+
+.product-tabs .product-cart-wrap .product-img-action-wrap .product-img img,
+.product-tabs .product-cart-wrap .product-img-action-wrap .product-img .default-img,
+.product-tabs .product-cart-wrap .product-img-action-wrap .product-img .hover-img,
+.daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img img,
+.daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img .default-img,
+.daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img .hover-img {
+  height: 100% !important;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .product-tabs .product-cart-wrap .product-img-action-wrap .product-img,
+  .daily-best-sells-section .product-cart-wrap .product-img-action-wrap .product-img {
+    height: 200px;
+  }
+}
+
+/* Compare page preview images */
+.table-compare .row_img img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Home "product-list-small" blocks (Top selling / Trending / Recently added / Top rated) */
+.product-list-small figure img {
+  width: 100%;
+  height: 80px;
+  max-height: 80px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Product detail sidebar "New products" widget */
+.product-sidebar .single-post .image img,
+.product-sidebar .single-post .image video {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 8px;
+}
+
+@media (max-width: 575px) {
+  .product-cart-wrap .product-img-action-wrap .product-img {
+    border-radius: 8px;
+  }
+}
+
 /* Categories button styling - ensure it looks like the original */
 .categories-button-active {
   display: inline-block;

@@ -97,14 +97,31 @@ export const getUnsplashHeroFallback = (index = 0) => {
  */
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
+  // Keep data/blob URLs as-is
+  if (imagePath.startsWith('data:') || imagePath.startsWith('blob:')) {
+    return imagePath;
+  }
   // If already absolute URL, return as-is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  // Prepend base URL for relative paths
-  const baseUrl = 'https://ebizportal.hexalabes.com';
+
+  // Prepend correct base origin for relative paths.
+  // Prefer REACT_APP_API_URL (strip `/api`), otherwise fall back to current origin.
+  let origin = '';
+  try {
+    const apiBase = process.env.REACT_APP_API_URL;
+    if (apiBase) {
+      origin = new URL(apiBase).origin;
+    } else if (typeof window !== 'undefined' && window.location?.origin) {
+      origin = window.location.origin;
+    }
+  } catch {
+    // ignore
+  }
+
   const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-  return `${baseUrl}${normalizedPath}`;
+  return origin ? `${origin}${normalizedPath}` : normalizedPath;
 };
 
 // Export arrays for direct use
