@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl, getUnsplashFallback } from '../../utils/imageUtils';
+import { useSafeHtml } from '../../utils/sanitizeHtml';
 import { useQuickView } from '../../context/QuickViewContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -222,7 +223,7 @@ const QuickViewModal = () => {
                   </div>
                   {description && (
                     <div className="short-desc mb-4">
-                      <div className="font-md" style={{ color: '#7E7E7E', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: description }} />
+                      <div className="font-md" style={{ color: '#7E7E7E', lineHeight: '1.6' }} dangerouslySetInnerHTML={useSafeHtml(description)} />
                     </div>
                   )}
                   <div className="detail-extralink mb-4">

@@ -103,36 +103,43 @@ const Contact = () => {
   };
 
   useEffect(() => {
+    // Track timeouts and intervals for cleanup
+    const timeoutIds = [];
+    const intervalIds = [];
+    let leafletMap = null;
+
     // Initialize Leaflet map
     const initMap = () => {
-      if (!window.L || mapInitialized.current) {
-        return;
+      if (!window.L || mapInitialized.current || !document.getElementById('map-panes')) {
+        return false;
       }
 
       try {
-        // Check if map container exists
+        // Check if map container exists and doesn't already have a map
         const mapContainer = document.getElementById('map-panes');
         if (!mapContainer || mapContainer._leaflet_id) {
-          return;
+          return false;
         }
 
         // Initialize map
-        const map = window.L.map('map-panes').setView([30.2672, -97.7431], 13); // Austin coordinates
+        leafletMap = window.L.map('map-panes').setView([30.2672, -97.7431], 13); // Austin coordinates
 
         // Add tile layer
         window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© OpenStreetMap contributors',
           maxZoom: 19
-        }).addTo(map);
+        }).addTo(leafletMap);
 
         // Add marker
-        window.L.marker([30.2672, -97.7431]).addTo(map)
+        window.L.marker([30.2672, -97.7431]).addTo(leafletMap)
           .bindPopup('A and U Support Center<br>5900 BALCONES DRIVE 28919<br>AUSTIN TAX, USA 78731')
           .openPopup();
 
         mapInitialized.current = true;
+        return true;
       } catch (error) {
         console.warn('Map initialization error:', error);
+        return false;
       }
     };
 
@@ -155,51 +162,65 @@ const Contact = () => {
         script.integrity = 'sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==';
         script.crossOrigin = '';
         script.onload = () => {
-          setTimeout(initMap, 500);
+          const timeoutId = setTimeout(initMap, 500);
+          timeoutIds.push(timeoutId);
         };
         script.onerror = () => {
           console.warn('Failed to load Leaflet library');
         };
         document.body.appendChild(script);
       } else {
-        setTimeout(initMap, 500);
+        const timeoutId = setTimeout(initMap, 500);
+        timeoutIds.push(timeoutId);
       }
     };
 
     // Try to initialize map
-    let timeoutId;
-    let checkInterval;
-
     const tryInit = () => {
       if (window.L) {
         initMap();
       } else {
         loadLeaflet();
         // Keep checking if Leaflet loads
-        checkInterval = setInterval(() => {
+        const checkInterval = setInterval(() => {
           if (window.L && !mapInitialized.current) {
             initMap();
             clearInterval(checkInterval);
+            intervalIds.splice(intervalIds.indexOf(checkInterval), 1);
           }
         }, 500);
+        intervalIds.push(checkInterval);
       }
     };
 
-    timeoutId = setTimeout(tryInit, 1000);
+    const timeoutId = setTimeout(tryInit, 1000);
+    timeoutIds.push(timeoutId);
 
     // Cleanup
     return () => {
-      clearTimeout(timeoutId);
-      if (checkInterval) {
-        clearInterval(checkInterval);
-      }
-      if (window.L) {
+      // Clear all pending timeouts and intervals
+      timeoutIds.forEach(id => clearTimeout(id));
+      intervalIds.forEach(id => clearInterval(id));
+
+      // Properly remove Leaflet map
+      if (window.L && mapInitialized.current) {
         try {
-          const mapContainer = document.getElementById('map-panes');
-          if (mapContainer && mapContainer._leaflet_id) {
-            const map = window.L.map.get(mapContainer._leaflet_id);
-            if (map) {
-              map.remove();
+          // If we have a map instance, remove it
+          if (leafletMap) {
+            leafletMap.remove();
+            leafletMap = null;
+          } else {
+            // Try to find and remove map from container
+            const mapContainer = document.getElementById('map-panes');
+            if (mapContainer && mapContainer._leaflet_id) {
+              // Remove all event listeners and data
+              mapContainer.removeAttribute('class');
+              mapContainer.removeAttribute('style');
+              mapContainer._leaflet_id = null;
+              // Clear the container
+              while (mapContainer.firstChild) {
+                mapContainer.removeChild(mapContainer.firstChild);
+              }
             }
           }
         } catch (error) {

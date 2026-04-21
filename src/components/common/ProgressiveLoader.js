@@ -9,17 +9,32 @@ import { useEffect } from 'react';
  */
 const ProgressiveLoader = () => {
   useEffect(() => {
+    // Track all timeouts and intervals for cleanup
+    const timeoutIds = [];
+    const intervalIds = [];
+
+    const clearAllTimers = () => {
+      timeoutIds.forEach(id => clearTimeout(id));
+      intervalIds.forEach(id => clearInterval(id));
+      timeoutIds.length = 0;
+      intervalIds.length = 0;
+    };
+
     // STEP 1: Remove preloader immediately to show content
     const preloader = document.getElementById('preloader-active');
     if (preloader) {
       // Hide preloader after a very short delay (just enough for first paint)
-      setTimeout(() => {
+      const preloaderId = setTimeout(() => {
         preloader.style.transition = 'opacity 0.3s ease-out';
         preloader.style.opacity = '0';
-        setTimeout(() => {
-          preloader.style.display = 'none';
+        const hideId = setTimeout(() => {
+          if (preloader.parentElement) {
+            preloader.style.display = 'none';
+          }
         }, 300);
+        timeoutIds.push(hideId);
       }, 100);
+      timeoutIds.push(preloaderId);
     }
 
     // STEP 2: Remove no-js class
@@ -58,7 +73,8 @@ const ProgressiveLoader = () => {
           if (checkFn()) {
             resolve();
           } else if (attempts < maxAttempts) {
-            setTimeout(check, 100);
+            const timerId = setTimeout(check, 100);
+            timeoutIds.push(timerId);
           } else {
             console.warn(`${pluginName} did not load in time, but continuing...`);
             resolve(); // Continue anyway to prevent blocking
@@ -106,12 +122,13 @@ const ProgressiveLoader = () => {
     }).then(() => {
       // Wait a bit for script to execute, then verify
       return new Promise((resolve) => {
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
           verifyPlugin(
             () => window.jQuery && window.jQuery.scrollUp,
             'scrollup.js'
           ).then(resolve);
         }, 200);
+        timeoutIds.push(timerId);
       });
     }).then(() => {
       // 3. Load wow.js before main.js (main.js initializes WOW)
@@ -208,7 +225,7 @@ const ProgressiveLoader = () => {
       });
 
       // Override slick initialization to prevent conflicts
-      const checkAndOverrideSlick = setInterval(() => {
+      let checkAndOverrideSlick = setInterval(() => {
         if (window.jQuery && window.jQuery.fn.slick) {
           const originalSlick = window.jQuery.fn.slick;
           window.jQuery.fn.slick = function(...args) {
@@ -223,11 +240,19 @@ const ProgressiveLoader = () => {
             return this;
           };
           clearInterval(checkAndOverrideSlick);
+          intervalIds.splice(intervalIds.indexOf(checkAndOverrideSlick), 1);
         }
       }, 100);
+      intervalIds.push(checkAndOverrideSlick);
 
       // Clear interval after 5 seconds if jQuery/Slick not found
-      setTimeout(() => clearInterval(checkAndOverrideSlick), 5000);
+      const timeoutId = setTimeout(() => {
+        if (intervalIds.includes(checkAndOverrideSlick)) {
+          clearInterval(checkAndOverrideSlick);
+          intervalIds.splice(intervalIds.indexOf(checkAndOverrideSlick), 1);
+        }
+      }, 5000);
+      timeoutIds.push(timeoutId);
     }).catch(error => {
       console.error('Error loading scripts:', error);
       // Even if there's an error, try to load background scripts
@@ -266,11 +291,13 @@ const ProgressiveLoader = () => {
     };
 
     // Enable lazy loading after a short delay
-    setTimeout(enableLazyLoading, 500);
+    const lazyLoadId = setTimeout(enableLazyLoading, 500);
+    timeoutIds.push(lazyLoadId);
 
     // Cleanup
     return () => {
       window.preventSlickAutoInit = false;
+      clearAllTimers();
     };
   }, []);
 

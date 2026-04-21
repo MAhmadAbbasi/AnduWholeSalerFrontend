@@ -6,6 +6,10 @@ const About = () => {
   const isInitialized = useRef(false);
 
   useEffect(() => {
+    // Track all timeouts and intervals
+    const timeoutIds = [];
+    const intervalIds = [];
+
     // Patch counterup plugin and add global error handler
     const setupCounterUpProtection = () => {
       if (!window.jQuery) return;
@@ -28,7 +32,7 @@ const About = () => {
               originalCounterUp.call($this, options);
               
               // Wrap the callback immediately after it's set
-              setTimeout(() => {
+              const timeoutId = setTimeout(() => {
                 const originalFunc = $this.data('counterup-func');
                 if (originalFunc && typeof originalFunc === 'function') {
                   const safeFunc = function() {
@@ -37,7 +41,8 @@ const About = () => {
                       if (nums && Array.isArray(nums) && nums.length > 0) {
                         $this.text(nums.shift());
                         if (nums.length) {
-                          setTimeout(safeFunc, (options && options.delay) || 10);
+                          const nextTimeout = setTimeout(safeFunc, (options && options.delay) || 10);
+                          timeoutIds.push(nextTimeout);
                         } else {
                           $this.data('counterup-nums', null);
                           $this.data('counterup-func', null);
@@ -63,6 +68,7 @@ const About = () => {
                   $this.data('counterup-func', safeFunc);
                 }
               }, 50);
+              timeoutIds.push(timeoutId);
             } catch (e) {
               // Ignore initialization errors
             }
@@ -129,9 +135,17 @@ const About = () => {
         if (window.jQuery) {
           errorHandlerCleanup = setupCounterUpProtection();
           clearInterval(checkJQuery);
+          intervalIds.splice(intervalIds.indexOf(checkJQuery), 1);
         }
       }, 100);
-      setTimeout(() => clearInterval(checkJQuery), 5000);
+      intervalIds.push(checkJQuery);
+      const timeoutId = setTimeout(() => {
+        if (intervalIds.includes(checkJQuery)) {
+          clearInterval(checkJQuery);
+          intervalIds.splice(intervalIds.indexOf(checkJQuery), 1);
+        }
+      }, 5000);
+      timeoutIds.push(timeoutId);
     }
 
     // Wait for scripts to load and DOM to be ready
@@ -147,7 +161,11 @@ const About = () => {
         try {
           // Destroy any existing slick instance first
           if ($carousel.hasClass('slick-initialized')) {
-            $carousel.slick('unslick');
+            try {
+              $carousel.slick('unslick');
+            } catch (e) {
+              // Ignore unslick errors
+            }
           }
           
           // Initialize the carousel
@@ -156,44 +174,47 @@ const About = () => {
           const appendArrowsClassName = '#' + id + '-arrows';
 
           // Use a small delay to ensure DOM is stable
-          setTimeout(() => {
-            if (carouselRef.current && window.jQuery(carouselRef.current).length) {
-              window.jQuery(sliderID).slick({
-                dots: false,
-                infinite: true,
-                speed: 1000,
-                arrows: true,
-                autoplay: true,
-                slidesToShow: 3,
-                slidesToScroll: 1,
-                loop: true,
-                adaptiveHeight: true,
-                useTransform: true,
-                cssEase: 'ease',
-                responsive: [
-                  {
-                    breakpoint: 1025,
-                    settings: {
-                      slidesToShow: 3,
-                      slidesToScroll: 3
+          const timeoutId = setTimeout(() => {
+            if (carouselRef.current && window.jQuery(carouselRef.current).length > 0) {
+              try {
+                window.jQuery(sliderID).slick({
+                  dots: false,
+                  infinite: true,
+                  speed: 1000,
+                  arrows: true,
+                  autoplay: true,
+                  slidesToShow: 3,
+                  slidesToScroll: 1,
+                  loop: true,
+                  adaptiveHeight: true,
+                  useTransform: true,
+                  cssEase: 'ease',
+                  responsive: [
+                    {
+                      breakpoint: 1025,
+                      settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3
+                      }
+                    },
+                    {
+                      breakpoint: 480,
+                      settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                      }
                     }
-                  },
-                  {
-                    breakpoint: 480,
-                    settings: {
-                      slidesToShow: 1,
-                      slidesToScroll: 1
-                    }
-                  }
-                ],
-                prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
-                nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>',
-                appendArrows: appendArrowsClassName
-              });
-              
-              // Carousel initialized successfully
+                  ],
+                  prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
+                  nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>',
+                  appendArrows: appendArrowsClassName
+                });
+              } catch (err) {
+                console.warn('Carousel initialization error:', err);
+              }
             }
           }, 100);
+          timeoutIds.push(timeoutId);
           
           isInitialized.current = true;
           return true;
@@ -219,26 +240,30 @@ const About = () => {
       
       if (attempts < maxAttempts && !isInitialized.current) {
         carouselInitTimeout = setTimeout(tryInit, 300);
+        timeoutIds.push(carouselInitTimeout);
       } else if (attempts >= maxAttempts && !isInitialized.current) {
         // Fallback: try one more time after a longer delay
-        setTimeout(() => {
-          if (carouselRef.current) {
+        const fallbackId = setTimeout(() => {
+          if (carouselRef.current && !isInitialized.current) {
             initCarousel();
           }
         }, 2000);
+        timeoutIds.push(fallbackId);
       }
     };
 
     // Start trying after a short delay to ensure scripts are loaded
     const timeoutId = setTimeout(tryInit, 1500);
+    timeoutIds.push(timeoutId);
 
     // Note: CounterUp is initialized globally by main.js and uses waypoints
     // to trigger when elements come into view. The safeguard above prevents errors.
 
     // Cleanup function
     return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(carouselInitTimeout);
+      // Clear all timeouts and intervals
+      timeoutIds.forEach(id => clearTimeout(id));
+      intervalIds.forEach(id => clearInterval(id));
       
       // Restore error handler
       if (errorHandlerCleanup) {
@@ -246,15 +271,18 @@ const About = () => {
       }
       
       const currentCarousel = carouselRef.current;
-      if (window.jQuery && currentCarousel) {
+      if (window.jQuery && currentCarousel && document.contains(currentCarousel)) {
         try {
           const $carousel = window.jQuery(currentCarousel);
           if ($carousel.length && $carousel.hasClass('slick-initialized')) {
-            $carousel.slick('unslick');
+            try {
+              $carousel.slick('unslick');
+            } catch (error) {
+              // Ignore unslick errors
+            }
           }
         } catch (error) {
           // Ignore cleanup errors
-          console.warn('Error during carousel cleanup:', error);
         }
       }
       isInitialized.current = false;
