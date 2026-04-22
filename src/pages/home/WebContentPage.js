@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useWebContent } from '../../context/WebContentContext';
 import { getImageUrl } from '../../utils/imageUtils';
-import { useSafeHtml } from '../../utils/sanitizeHtml';
+import { getSafeHtml } from '../../utils/sanitizeHtml';
 
 const WebContentPage = () => {
   const { header, banner, slider, nearSlider, footer, loading, error } = useWebContent();
@@ -102,7 +102,7 @@ const WebContentPage = () => {
                       {renderImage(item)}
                       {item.title && <h4 className="mt-10">{item.title}</h4>}
                       {item.subtitle && <p className="text-muted">{item.subtitle}</p>}
-                      {item.content && <div dangerouslySetInnerHTML={useSafeHtml(item.content)} />}
+                      {item.content && <div dangerouslySetInnerHTML={getSafeHtml(item.content)} />}
                       {item.buttonText && item.linkUrl && (
                         <span className="btn btn-xs mt-10">{item.buttonText}</span>
                       )}
@@ -236,7 +236,7 @@ const WebContentPage = () => {
                     {renderImage(item)}
                     {item.title && <h5 className="mt-10 mb-5">{item.title}</h5>}
                     {item.subtitle && <p className="text-muted mb-5" style={{ fontSize: '13px' }}>{item.subtitle}</p>}
-                    {item.content && <div style={{ fontSize: '13px' }} dangerouslySetInnerHTML={useSafeHtml(item.content)} />}
+                    {item.content && <div style={{ fontSize: '13px' }} dangerouslySetInnerHTML={getSafeHtml(item.content)} />}
                     {item.buttonText && item.linkUrl && (
                       renderLink(item,
                         <span className="btn btn-xs mt-10" style={{ background: '#3BB77E', color: '#fff' }}>

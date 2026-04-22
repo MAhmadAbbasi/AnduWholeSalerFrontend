@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCompare } from '../../context/CompareContext';
 import { useCart } from '../../context/CartContext';
 import { getImageUrl, getUnsplashFallback } from '../../utils/imageUtils';
-import { useSafeHtml } from '../../utils/sanitizeHtml';
+import { getSafeHtml } from '../../utils/sanitizeHtml';
 
 const ShopCompare = () => {
   const { compareItems, removeFromCompare, clearCompare, loading } = useCompare();
@@ -161,7 +161,7 @@ const ShopCompare = () => {
                           const description = item.description || item.product?.description || 'No description available';
                           return (
                             <td className="row_text font-xs" key={item.id}>
-                              <div className="font-sm text-muted" dangerouslySetInnerHTML={useSafeHtml(description)} />
+                              <div className="font-sm text-muted" dangerouslySetInnerHTML={getSafeHtml(description)} />
                             </td>
                           );
                         })}

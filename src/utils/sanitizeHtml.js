@@ -74,11 +74,14 @@ const sanitizeHtml = (html) => {
  * Safely renders HTML content as React-managed content
  * This prevents jQuery from interfering with React's DOM management
  */
-export const useSafeHtml = (html) => {
+export const getSafeHtml = (html) => {
   if (!html || typeof html !== 'string') {
     return { __html: '' };
   }
   return { __html: sanitizeHtml(html) };
 };
+
+// Deprecated: use getSafeHtml instead
+export const useSafeHtml = getSafeHtml;
 
 export default sanitizeHtml;
