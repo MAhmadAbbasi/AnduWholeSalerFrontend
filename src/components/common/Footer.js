@@ -200,7 +200,7 @@ const Footer = () => {
                   <li>
                     <img src="/assets/imgs/theme/icons/icon-contact.svg" alt="" />
                     <strong>Call Us:</strong>
-                    <span>{footerIntro?.buttonText || '(+91) - 540-025-124553'}</span>
+                    <span>{footerIntro?.buttonText || ' +1 (512) 355-5036'}</span>
                   </li>
                   <li>
                     <img src="/assets/imgs/theme/icons/icon-email-2.svg" alt="" />

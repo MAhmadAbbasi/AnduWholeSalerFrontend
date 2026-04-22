@@ -476,7 +476,7 @@ const Home = () => {
       id: 'static-1',
       title: 'Fresh From The Farm',
       subtitle: 'Farm-fresh produce delivered to your doorstep',
-      imageUrl: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1920&h=800&fit=crop&q=80',
+      imageUrl: '/assets/imgs/banner/Landingpage.jpeg',
       linkUrl: '/shop',
       buttonText: 'Shop Now'
     },
@@ -484,7 +484,7 @@ const Home = () => {
       id: 'static-2',
       title: 'Organic and Natural',
       subtitle: '100% organic seeds, fertilizers and farm supplies',
-      imageUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&h=800&fit=crop&q=80',
+      imageUrl: '/assets/imgs/banner/LandingPage2.jpeg',
       linkUrl: '/shop',
       buttonText: 'Shop Now'
     }
@@ -495,7 +495,7 @@ const Home = () => {
       id: item.id || `dynamic-${index}`,
       title: item.title || item.subtitle || 'Featured Collection',
       subtitle: item.content || item.subtitle || 'Explore the latest updates from our portal',
-      imageUrl: getDynamicImage(item, getUnsplashHeroFallback(index)),
+      imageUrl: index === 0 ? '/assets/imgs/banner/Landingpage.jpeg' : (index === 1 ? '/assets/imgs/banner/LandingPage2.jpeg' : getDynamicImage(item, getUnsplashHeroFallback(index))),
       linkUrl: getDynamicLink(item, '/shop'),
       buttonText: item.buttonText || 'Explore'
     }))
