@@ -95,7 +95,7 @@ const Footer = () => {
                   </form>
                 </div>
                 <img 
-                  src="assets/imgs/banner/banner-9.png" 
+                  src="/assets/imgs/theme/image.png" 
                   alt="newsletter"
                   onError={(e) => {
                     e.target.src = getUnsplashFallback(0);

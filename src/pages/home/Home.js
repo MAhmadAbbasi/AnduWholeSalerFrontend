@@ -14,7 +14,7 @@ const Home = () => {
   const { addToWishlist, isInWishlist } = useWishlist();
   const { addToCompare, isInCompare } = useCompare();
   const { showQuickView } = useQuickView();
-  const { header, banner, slider, nearSlider, footer } = useWebContent();
+  const { header, banner, slider, footer } = useWebContent();
   const heroSliderRef = useRef(null);
   const carausel4ColumnsRef = useRef(null);
   const initializedRefs = useRef({
@@ -27,9 +27,6 @@ const Home = () => {
   const [activePopularTab, setActivePopularTab] = useState('all');
   const [activeDailyTab, setActiveDailyTab] = useState('featured');
   const [dailyTabLoading, setDailyTabLoading] = useState(false);
-  const [menCategoryId, setMenCategoryId] = useState(null);
-  const [womenCategoryId, setWomenCategoryId] = useState(null);
-  const [kidsCategoryId, setKidsCategoryId] = useState(null);
 
   // Clean up zoom elements when component mounts
   useEffect(() => {
@@ -409,33 +406,6 @@ const Home = () => {
           const tabs = cats.filter(c => c.isActive).slice(0, 6).map(c => ({ id: c.id, name: c.categoryName || c.name || c.slug || 'Category' }));
           setPopularTabs(tabs);
           
-          // Find Men category for banner links
-          const menCategory = cats.find(c => 
-            (c.categoryName || c.name || '').toLowerCase().includes('men') ||
-            (c.slug || '').toLowerCase().includes('men')
-          );
-          if (menCategory) {
-            setMenCategoryId(menCategory.id);
-          }
-          
-          // Find Women category for banner links
-          const womenCategory = cats.find(c => 
-            (c.categoryName || c.name || '').toLowerCase().includes('women') ||
-            (c.slug || '').toLowerCase().includes('women')
-          );
-          if (womenCategory) {
-            setWomenCategoryId(womenCategory.id);
-          }
-          
-          // Find Kids category for banner links
-          const kidsCategory = cats.find(c => 
-            (c.categoryName || c.name || '').toLowerCase().includes('kid') ||
-            (c.slug || '').toLowerCase().includes('kid') ||
-            (c.categoryName || c.name || '').toLowerCase().includes('child')
-          );
-          if (kidsCategory) {
-            setKidsCategoryId(kidsCategory.id);
-          }
         }
       } catch (err) {
         console.error('Error fetching categories for popular tabs:', err);
@@ -490,15 +460,24 @@ const Home = () => {
     }
   ];
 
-  const heroSlides = slider.length > 0
-    ? slider.slice(0, 6).map((item, index) => ({
-      id: item.id || `dynamic-${index}`,
-      title: item.title || item.subtitle || 'Featured Collection',
-      subtitle: item.content || item.subtitle || 'Explore the latest updates from our portal',
-      imageUrl: index === 0 ? '/assets/imgs/banner/Landingpage.jpeg' : (index === 1 ? '/assets/imgs/banner/LandingPage2.jpeg' : getDynamicImage(item, getUnsplashHeroFallback(index))),
-      linkUrl: getDynamicLink(item, '/shop'),
-      buttonText: item.buttonText || 'Explore'
-    }))
+  const dynamicHeroSlides = slider.slice(0, 6).map((item, index) => ({
+    id: item.id || `dynamic-${index}`,
+    title: item.title || item.subtitle || 'Featured Collection',
+    subtitle: item.content || item.subtitle || 'Explore the latest updates from our portal',
+    imageUrl: index === 0 ? '/assets/imgs/banner/Landingpage.jpeg' : (index === 1 ? '/assets/imgs/banner/LandingPage2.jpeg' : getDynamicImage(item, getUnsplashHeroFallback(index))),
+    linkUrl: getDynamicLink(item, '/shop'),
+    buttonText: item.buttonText || 'Explore'
+  }));
+
+  // Build hero slides with unique images so alternation is always visible.
+  const mergedHeroSlides = [...dynamicHeroSlides, ...staticHeroSlides];
+  const uniqueHeroSlides = mergedHeroSlides.filter(
+    (slide, index, arr) => arr.findIndex((item) => item.imageUrl === slide.imageUrl) === index
+  );
+
+  // Ensure at least 2 distinct slides, including LandingPage2 fallback when needed.
+  const heroSlides = uniqueHeroSlides.length >= 2
+    ? uniqueHeroSlides
     : staticHeroSlides;
 
   useEffect(() => {
@@ -552,22 +531,10 @@ const Home = () => {
                       style={{
                         backgroundImage: `url(${slide.imageUrl})`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundPosition: 'center',
+                        minHeight: '500px'
                       }}
                     >
-                      <div className="slider-content">
-                        <h1 className="display-2 mb-40">{slide.title}</h1>
-                        <p className="mb-65">{slide.subtitle}</p>
-                        {slide.linkUrl && slide.linkUrl.startsWith('http') ? (
-                          <a href={slide.linkUrl} target="_blank" rel="noopener noreferrer" className="btn btn-lg">
-                            {slide.buttonText} <i className="fi-rs-arrow-small-right"></i>
-                          </a>
-                        ) : (
-                          <Link to={slide.linkUrl || '/shop'} className="btn btn-lg">
-                            {slide.buttonText} <i className="fi-rs-arrow-small-right"></i>
-                          </Link>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -575,11 +542,15 @@ const Home = () => {
               </div>
             </div>
             <div className="col-lg-4 d-none d-xl-block">
-              <div className="banner-img style-3 animated animated">
+              <div
+                className="banner-img style-3 animated animated"
+                style={{
+                  backgroundImage: "url('/assets/imgs/banner/SideImage.jpeg')",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
                 <div className="banner-text mt-50">
-                  <h2 className="mb-50">
-                    {getDynamicTitle(banner[0], 'Delivered to your farm')}
-                  </h2>
                   {renderBannerCta(banner[0], '/shop')}
                 </div>
               </div>
@@ -615,83 +586,6 @@ const Home = () => {
         </section>
       )}
 
-      {/* Banners Section */}
-     
-      {/*End banners*/}
- <section className="banners mb-25">
-            <div className="container">
-                <div className="row">
-          {nearSlider.length > 0 ? (
-            nearSlider.slice(0, 3).map((item, index) => (
-            <div key={item.id || index} className="col-lg-4 col-md-6">
-              <div className="banner-img wow animate__animated animate__fadeInUp" data-wow-delay={`${index * 0.2}s`}>
-              <img
-                src={getDynamicImage(item, getUnsplashFallback(index))}
-                alt={item.title || 'Promotional banner'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }}
-                onError={(e) => { e.target.src = getUnsplashFallback(index + 1); }}
-              />
-              <div className="banner-text">
-                {item.linkUrl && item.linkUrl.startsWith('http') ? (
-                <a href={item.linkUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <h4 style={{ cursor: 'pointer' }}>{getDynamicTitle(item, 'Featured Products')}</h4>
-                </a>
-                ) : (
-                <Link to={getDynamicLink(item, '/shop')} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <h4 style={{ cursor: 'pointer' }}>{getDynamicTitle(item, 'Featured Products')}</h4>
-                </Link>
-                )}
-                {renderBannerCta(item, '/shop')}
-              </div>
-              </div>
-            </div>
-            ))
-          ) : (
-            <>
-            <div className="col-lg-4 col-md-6">
-              <div className="banner-img wow animate__animated animate__fadeInUp" data-wow-delay="0">
-                <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=400&fit=crop&q=80" alt="Fresh Fruits & Vegetables" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }} />
-                <div className="banner-text">
-                  <Link to={menCategoryId ? `/shop?categoryId=${menCategoryId}` : '/shop'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h4 style={{ cursor: 'pointer' }}>
-                      Fresh Fruits &<br />Vegetables from<br />
-                      Local Farms
-                    </h4>
-                  </Link>
-                  <Link to={menCategoryId ? `/shop?categoryId=${menCategoryId}` : '/shop'} className="btn btn-xs">Shop Now <i className="fi-rs-arrow-small-right"></i></Link>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 col-md-6">
-              <div className="banner-img wow animate__animated animate__fadeInUp" data-wow-delay=".2s">
-                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&h=400&fit=crop&q=80" alt="Quality Seeds & Farm Supplies" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }} />
-                <div className="banner-text">
-                  <Link to={womenCategoryId ? `/shop?categoryId=${womenCategoryId}` : '/shop'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h4 style={{ cursor: 'pointer' }}>
-                      Quality Seeds &<br />
-                      Farm Supplies
-                    </h4>
-                  </Link>
-                  <Link to={womenCategoryId ? `/shop?categoryId=${womenCategoryId}` : '/shop'} className="btn btn-xs">Shop Now <i className="fi-rs-arrow-small-right"></i></Link>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4 d-md-none d-lg-flex">
-              <div className="banner-img mb-sm-0 wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600&h=400&fit=crop&q=80" alt="Best Organic Agricultural Products" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '15px' }} />
-                <div className="banner-text">
-                  <Link to={kidsCategoryId ? `/shop?categoryId=${kidsCategoryId}` : '/shop'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <h4 style={{ cursor: 'pointer' }}>Best Organic <br />Agricultural Products</h4>
-                  </Link>
-                  <Link to={kidsCategoryId ? `/shop?categoryId=${kidsCategoryId}` : '/shop'} className="btn btn-xs">Shop Now <i className="fi-rs-arrow-small-right"></i></Link>
-                </div>
-              </div>
-            </div>
-            </>
-          )}
-                </div>
-            </div>
-        </section>
       {/* Product Tabs Section */}
       <section className="product-tabs section-padding position-relative">
         <div className="container">
