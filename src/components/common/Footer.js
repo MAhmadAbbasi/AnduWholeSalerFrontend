@@ -59,13 +59,29 @@ const Footer = () => {
   };
 
   const renderFooterLink = (item, idx) => {
-    const href = item?.href || '#';
+    const rawHref = (item?.href || '#').trim();
     const label = item?.label || `Link ${idx + 1}`;
+    const normalizedLabel = String(label).trim().toLowerCase();
+    let href = rawHref;
+
+    // Map common footer labels to stable internal routes when CMS data is incomplete.
+    if ((href === '#' || !href) && (normalizedLabel === 'about' || normalizedLabel === 'about us')) {
+      href = '/about';
+    }
+
+    // Convert relative internal paths like "about" to "/about".
+    if (href !== '#' && !href.startsWith('/') && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+      href = `/${href}`;
+    }
 
     if (href.startsWith('http://') || href.startsWith('https://')) {
       return (
         <a href={href} target="_blank" rel="noopener noreferrer">{label}</a>
       );
+    }
+
+    if (href.startsWith('mailto:') || href.startsWith('tel:')) {
+      return <a href={href}>{label}</a>;
     }
 
     if (href === '#') {
@@ -276,20 +292,6 @@ const Footer = () => {
                 </div>
               </>
             )}
-            <div className="footer-link-widget widget-install-app col wow animate__animated animate__fadeInUp" data-wow-delay=".5s">
-              <h4 className="widget-title">Install App</h4>
-              <p className="">From App Store or Google Play</p>
-              <div className="download-app">
-                <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2 mb-lg-0">
-                  <img className="active" src="/assets/imgs/theme/icons/logo-apple.svg" alt="App Store" />
-                </a>
-                <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2">
-                  <img src="/assets/imgs/theme/icons/logo-google.svg" alt="Google Play" />
-                </a>
-              </div>
-              <p className="mb-20">Secured Payment Gateways</p>
-              <img className="" src={getImageUrl(footerIntro?.imageUrl) || '/assets/imgs/theme/icons/payment-visa.svg'} alt="" />
-            </div>
           </div>
         </div>
       </section>
