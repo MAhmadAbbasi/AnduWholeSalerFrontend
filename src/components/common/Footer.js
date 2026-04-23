@@ -271,23 +271,6 @@ const Footer = () => {
                     <li><Link to="/login">Sign In</Link></li>
                     <li><Link to="/shop-cart">View Cart</Link></li>
                     <li><Link to="/shop-wishlist">My Wishlist</Link></li>
-                    <li><Link to="/shop-compare">Compare products</Link></li>
-                  </ul>
-                </div>
-                <div className="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
-                  <h4 className="widget-title">Corporate</h4>
-                  <ul className="footer-list mb-sm-5 mb-md-0">
-                    <li><span>Become a Vendor</span></li>
-                    <li><span>Affiliate Program</span></li>
-                    <li><span>Farm Careers</span></li>
-                  </ul>
-                </div>
-                <div className="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                  <h4 className="widget-title">Popular</h4>
-                  <ul className="footer-list mb-sm-5 mb-md-0">
-                    <li><span>Fresh Produce</span></li>
-                    <li><span>Farm Supplies</span></li>
-                    <li><span>Organic Products</span></li>
                   </ul>
                 </div>
               </>
