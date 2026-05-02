@@ -304,32 +304,13 @@ const Contact = () => {
                     <h4 className="mb-15 text-brand">Office</h4>
                     5900 BALCONES DRIVE 28919<br />
                     AUSTIN TAX, USA 78731<br />
-                    <abbr title="Phone">Phone:</abbr> 1900 - 6666<br />
-                    <abbr title="Email">Email: </abbr>sale@aandu.com<br />
+                    <abbr title="Phone">Phone:</abbr> +1 (512) 355-5036<br />
+                    <abbr title="Email">Email: </abbr>aanduwholesellersllc@gmail.com<br />
                     <Link to="#" className="btn btn-sm font-weight-bold text-white mt-20 border-radius-5 btn-shadow-brand hover-up">
                       <i className="fi-rs-marker mr-5"></i>View map
                     </Link>
                   </div>
-                  <div className="col-md-4 mb-4 mb-md-0">
-                    <h4 className="mb-15 text-brand">Studio</h4>
-                    5900 BALCONES DRIVE 28919<br />
-                    AUSTIN TAX, USA 78731<br />
-                    <abbr title="Phone">Phone:</abbr> 1900 - 8888<br />
-                    <abbr title="Email">Email: </abbr>sale@aandu.com<br />
-                    <Link to="#" className="btn btn-sm font-weight-bold text-white mt-20 border-radius-5 btn-shadow-brand hover-up">
-                      <i className="fi-rs-marker mr-5"></i>View map
-                    </Link>
-                  </div>
-                  <div className="col-md-4">
-                    <h4 className="mb-15 text-brand">Shop</h4>
-                    5900 BALCONES DRIVE 28919<br />
-                    AUSTIN TAX, USA 78731<br />
-                    <abbr title="Phone">Phone:</abbr> (+01) - 2345 - 6789<br />
-                    <abbr title="Email">Email: </abbr>sale@aandu.com<br />
-                    <Link to="#" className="btn btn-sm font-weight-bold text-white mt-20 border-radius-5 btn-shadow-brand hover-up">
-                      <i className="fi-rs-marker mr-5"></i>View map
-                    </Link>
-                  </div>
+
                 </div>
                 <div className="row">
                   <div className="col-xl-8">

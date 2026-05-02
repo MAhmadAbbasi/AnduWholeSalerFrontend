@@ -7711,3 +7711,8 @@
 
 })));
 //# sourceMappingURL=html2canvas.js.map
+
+
+
+
+

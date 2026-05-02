@@ -59,13 +59,29 @@ const Footer = () => {
   };
 
   const renderFooterLink = (item, idx) => {
-    const href = item?.href || '#';
+    const rawHref = (item?.href || '#').trim();
     const label = item?.label || `Link ${idx + 1}`;
+    const normalizedLabel = String(label).trim().toLowerCase();
+    let href = rawHref;
+
+    // Map common footer labels to stable internal routes when CMS data is incomplete.
+    if ((href === '#' || !href) && (normalizedLabel === 'about' || normalizedLabel === 'about us')) {
+      href = '/about';
+    }
+
+    // Convert relative internal paths like "about" to "/about".
+    if (href !== '#' && !href.startsWith('/') && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+      href = `/${href}`;
+    }
 
     if (href.startsWith('http://') || href.startsWith('https://')) {
       return (
         <a href={href} target="_blank" rel="noopener noreferrer">{label}</a>
       );
+    }
+
+    if (href.startsWith('mailto:') || href.startsWith('tel:')) {
+      return <a href={href}>{label}</a>;
     }
 
     if (href === '#') {
@@ -95,7 +111,7 @@ const Footer = () => {
                   </form>
                 </div>
                 <img 
-                  src="assets/imgs/banner/banner-9.png" 
+                  src="/assets/imgs/theme/image.png" 
                   alt="newsletter"
                   onError={(e) => {
                     e.target.src = getUnsplashFallback(0);
@@ -189,7 +205,7 @@ const Footer = () => {
               <div className="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0 wow animate__animated animate__fadeInUp" data-wow-delay="0">
                 <div className="logo mb-30">
                   <a href="/" className="mb-15"><img src="/assets/imgs/theme/logonew.jpeg" alt="A and U logo" className="brand-logo-image" /></a>
-                  <p className="font-lg text-heading">{footerIntro?.subtitle || 'Awesome grocery store website template'}</p>
+                  <p className="font-lg text-heading">{footerIntro?.subtitle || 'A and U wholeseller - E-commerce & Wholesale Supply Solutions'}</p>
                 </div>
                 <ul className="contact-infor">
                   <li>
@@ -200,12 +216,12 @@ const Footer = () => {
                   <li>
                     <img src="/assets/imgs/theme/icons/icon-contact.svg" alt="" />
                     <strong>Call Us:</strong>
-                    <span>{footerIntro?.buttonText || '(+91) - 540-025-124553'}</span>
+                    <span>{footerIntro?.buttonText || ' +1 (512) 355-5036'}</span>
                   </li>
                   <li>
                     <img src="/assets/imgs/theme/icons/icon-email-2.svg" alt="" />
                     <strong>Email:</strong>
-                    <span>{footerIntro?.linkUrl || 'sale@aandu.com'}</span>
+                    <span>{footerIntro?.linkUrl || 'aanduwholesellersllc@gmail.com'}</span>
                   </li>
                   <li>
                     <img src="/assets/imgs/theme/icons/icon-clock.svg" alt="" />
@@ -255,41 +271,10 @@ const Footer = () => {
                     <li><Link to="/login">Sign In</Link></li>
                     <li><Link to="/shop-cart">View Cart</Link></li>
                     <li><Link to="/shop-wishlist">My Wishlist</Link></li>
-                    <li><Link to="/shop-compare">Compare products</Link></li>
-                  </ul>
-                </div>
-                <div className="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".3s">
-                  <h4 className="widget-title">Corporate</h4>
-                  <ul className="footer-list mb-sm-5 mb-md-0">
-                    <li><span>Become a Vendor</span></li>
-                    <li><span>Affiliate Program</span></li>
-                    <li><span>Farm Careers</span></li>
-                  </ul>
-                </div>
-                <div className="footer-link-widget col wow animate__animated animate__fadeInUp" data-wow-delay=".4s">
-                  <h4 className="widget-title">Popular</h4>
-                  <ul className="footer-list mb-sm-5 mb-md-0">
-                    <li><span>Fresh Produce</span></li>
-                    <li><span>Farm Supplies</span></li>
-                    <li><span>Organic Products</span></li>
                   </ul>
                 </div>
               </>
             )}
-            <div className="footer-link-widget widget-install-app col wow animate__animated animate__fadeInUp" data-wow-delay=".5s">
-              <h4 className="widget-title">Install App</h4>
-              <p className="">From App Store or Google Play</p>
-              <div className="download-app">
-                <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2 mb-lg-0">
-                  <img className="active" src="/assets/imgs/theme/icons/logo-apple.svg" alt="App Store" />
-                </a>
-                <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="hover-up mb-sm-2">
-                  <img src="/assets/imgs/theme/icons/logo-google.svg" alt="Google Play" />
-                </a>
-              </div>
-              <p className="mb-20">Secured Payment Gateways</p>
-              <img className="" src={getImageUrl(footerIntro?.imageUrl) || '/assets/imgs/theme/icons/payment-visa.svg'} alt="" />
-            </div>
           </div>
         </div>
       </section>
@@ -306,13 +291,9 @@ const Footer = () => {
             </p>
           </div>
           <div className="col-xl-4 col-lg-6 text-center d-none d-xl-block">
-            <div className="hotline d-lg-inline-flex mr-30">
-              <img src="/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-              <p>1900 - 6666<span>Working 8:00 - 22:00</span></p>
-            </div>
             <div className="hotline d-lg-inline-flex">
               <img src="/assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-              <p>1900 - 8888<span>24/7 Support Center</span></p>
+              <p>+1 (512) 355-5036<span>24/7 Support Center</span></p>
             </div>
           </div>
             <div className="col-xl-4 col-lg-6 col-md-6 text-end d-none d-md-block">

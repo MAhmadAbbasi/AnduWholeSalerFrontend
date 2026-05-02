@@ -305,15 +305,6 @@ const Header = () => {
                     </form>
                   </div> */}
                   <div className="header-action-icon-2">
-                    <Link to="/shop-compare">
-                        <img className="svgInject" alt="A and U" src="/assets/imgs/theme/icons/icon-compare.svg" />
-                        {compareCount > 0 && (
-                          <span className="pro-count blue">{compareCount}</span>
-                        )}
-                    </Link>
-                    <Link to="/shop-compare"><span className="lable ml-0">Compare</span></Link>
-                  </div>
-                  <div className="header-action-icon-2">
                     <Link to="/shop-wishlist">
                         <img className="svgInject" alt="A and U" src="/assets/imgs/theme/icons/icon-heart.svg" />
                         {wishlistCount > 0 && (
@@ -647,7 +638,7 @@ const Header = () => {
             </div>
             <div className="hotline d-none d-lg-flex">
               <img src="/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
-              <p>1900 - 6666<span>24/7 Support Center</span></p>
+              <p>+1 (512) 355-5036<span>24/7 Support Center</span></p>
             </div>
             <div className="header-action-icon-2 d-block d-lg-none">
               <Link className="mini-cart-icon" to="/shop-cart">

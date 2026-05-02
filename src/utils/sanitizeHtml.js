@@ -81,4 +81,7 @@ export const getSafeHtml = (html) => {
   return { __html: sanitizeHtml(html) };
 };
 
+// Deprecated: use getSafeHtml instead
+export const useSafeHtml = getSafeHtml;
+
 export default sanitizeHtml;
