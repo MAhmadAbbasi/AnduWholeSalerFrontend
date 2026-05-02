@@ -4,6 +4,31 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://localhost:7212/ap
 const STOREFRONT = '/storefront';
 const TENANT_ID = process.env.REACT_APP_TENANT_ID;
 
+// In-memory cache: deduplicates in-flight requests and caches results for TTL
+const _apiCache = new Map();
+const _API_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const withCache = (key, fetchFn) => {
+  const entry = _apiCache.get(key);
+  if (entry) {
+    // Return cached promise (deduplicates in-flight) or cached data within TTL
+    if (entry.promise) return entry.promise;
+    if (Date.now() - entry.t < _API_CACHE_TTL) return Promise.resolve(entry.d);
+    _apiCache.delete(key);
+  }
+  const promise = fetchFn()
+    .then(data => {
+      _apiCache.set(key, { d: data, t: Date.now() });
+      return data;
+    })
+    .catch(err => {
+      _apiCache.delete(key);
+      throw err;
+    });
+  _apiCache.set(key, { promise });
+  return promise;
+};
+
 // Get auth token from localStorage
 const getAuthToken = () => localStorage.getItem('authToken');
 
@@ -104,7 +129,8 @@ export const getCategoryById = async (id) => {
   }
 };
 
-export const getCategoriesHierarchical = async () => {
+export const getCategoriesHierarchical = () =>
+  withCache('categories:hierarchical', async () => {
   try {
     const response = await apiCall(`${STOREFRONT}/categories/all`);
     let categories = [];
@@ -153,22 +179,23 @@ export const getCategoriesHierarchical = async () => {
     console.error('Error fetching hierarchical categories:', error);
     return [];
   }
-};
+  });
 
 // ──────────────────────────────────────────
 // PRODUCTS
 // ──────────────────────────────────────────
 
-export const getProducts = async () => {
-  try {
-    const response = await apiCall(`${STOREFRONT}/products/all`);
-    if (response.success && response.data) return response.data;
-    return response.data || [];
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    return [];
-  }
-};
+export const getProducts = () =>
+  withCache('products:all', async () => {
+    try {
+      const response = await apiCall(`${STOREFRONT}/products/all`);
+      if (response.success && response.data) return response.data;
+      return response.data || [];
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      return [];
+    }
+  });
 
 export const getProductById = async (id) => {
   try {

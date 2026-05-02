@@ -567,35 +567,24 @@ body, html {
 }
 
 .carausel-4-columns-cover .carausel-4-columns {
-  overflow: hidden !important;
+  overflow: visible;
 }
 
 .carausel-4-columns {
-  overflow: hidden !important;
+  overflow: visible;
 }
 
+/* Let slick manage its own overflow — forcing hidden on track/slide breaks slide widths */
 .slick-list {
   overflow: hidden !important;
 }
 
 .slick-track {
-  overflow: hidden !important;
+  overflow: visible;
 }
 
 .slick-slide {
-  overflow: hidden !important;
-}
-
-.carausel-4-columns-cover .slick-list {
-  overflow: hidden !important;
-}
-
-.carausel-4-columns-cover .slick-track {
-  overflow: hidden !important;
-}
-
-.carausel-4-columns-cover .slick-slide {
-  overflow: hidden !important;
+  overflow: visible;
 }
 
 /* Tooltip container - allow overflow for tooltips */

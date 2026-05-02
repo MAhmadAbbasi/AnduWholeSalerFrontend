@@ -8,6 +8,7 @@ import { useQuickView } from '../../context/QuickViewContext';
 import { useWebContent } from '../../context/WebContentContext';
 import { getImageUrl, getUnsplashFallback, getUnsplashHeroFallback } from '../../utils/imageUtils';
 import NoProductsFound from '../../components/common/NoProductsFound';
+import SlickCarousel from '../../components/common/SlickCarousel';
 
 const Home = () => {
   const { addToCart } = useCart();
@@ -16,17 +17,18 @@ const Home = () => {
   const { showQuickView } = useQuickView();
   const { header, banner, slider, nearSlider, footer } = useWebContent();
   const heroSliderRef = useRef(null);
-  const carausel4ColumnsRef = useRef(null);
   const initializedRefs = useRef({
     heroSlider: false,
     carausel4Columns: false
   });
-  
+  const dailyTabFirstRender = useRef(true);
+  const loadingOverlayRef = useRef(null);
+  const tabContentRef = useRef(null);
+
   const [products, setProducts] = useState([]);
   const [popularTabs, setPopularTabs] = useState([]);
   const [activePopularTab, setActivePopularTab] = useState('all');
   const [activeDailyTab, setActiveDailyTab] = useState('featured');
-  const [dailyTabLoading, setDailyTabLoading] = useState(false);
   const [menCategoryId, setMenCategoryId] = useState(null);
   const [womenCategoryId, setWomenCategoryId] = useState(null);
   const [kidsCategoryId, setKidsCategoryId] = useState(null);
@@ -122,6 +124,10 @@ const Home = () => {
 
     // Initialize product carousels
     const initCarausel4Columns = () => {
+      // Skip if products haven't rendered yet — the products useEffect will handle init
+      const firstCarousel = document.getElementById('carausel-4-columns');
+      if (!firstCarousel || !firstCarousel.querySelector('.product-cart-wrap')) return;
+
       const carausels = ['carausel-4-columns', 'carausel-4-columns-2', 'carausel-4-columns-3'];
       carausels.forEach((id, index) => {
         const $carausel = window.jQuery(`#${id}`);
@@ -170,9 +176,7 @@ const Home = () => {
     };
 
     const initAll = () => {
-      if (!window.jQuery || !window.jQuery.fn.slick) return;
-      initHeroSlider();
-      initCarausel4Columns();
+      // Hero slider managed by heroSlides useEffect; product carousels managed by products useEffect
     };
 
     // Try to initialize - poll until jQuery + slick are available
@@ -215,63 +219,24 @@ const Home = () => {
     };
   }, []);
 
-  // Handle tab changes for Daily Best Sells carousel
+  // When tab changes, let CSS show the pane then refresh Slick dimensions.
+  // SlickCarousel components own initialization — this effect only fixes layout
+  // for carousels that first mounted while their tab-pane was hidden (display:none).
   useEffect(() => {
-    if (!window.jQuery || !window.jQuery.fn.slick) return;
-
-    // Show loading state
-    setDailyTabLoading(true);
-
-    // Wait for DOM to update after tab change
+    if (dailyTabFirstRender.current) {
+      dailyTabFirstRender.current = false;
+      return;
+    }
+    const carouselId = activeDailyTab === 'featured' ? 'carausel-4-columns' :
+                       activeDailyTab === 'popular'  ? 'carausel-4-columns-2' :
+                                                       'carausel-4-columns-3';
     const timer = setTimeout(() => {
-      const carouselId = activeDailyTab === 'featured' ? 'carausel-4-columns' :
-                         activeDailyTab === 'popular' ? 'carausel-4-columns-2' :
-                         'carausel-4-columns-3';
-      const arrowsId = activeDailyTab === 'featured' ? 'carausel-4-columns-arrows' :
-                      activeDailyTab === 'popular' ? 'carausel-4-columns-arrows-2' :
-                      'carausel-4-columns-arrows-3';
-      
+      if (!window.jQuery) return;
       const $carousel = window.jQuery(`#${carouselId}`);
-      if (!$carousel.length) {
-        setDailyTabLoading(false);
-        return;
+      if ($carousel.length && $carousel.hasClass('slick-initialized')) {
+        $carousel.slick('setPosition');
       }
-
-      // Force-clean any leftover slick state
-      try {
-        if ($carousel.hasClass('slick-initialized')) {
-          $carousel.slick('unslick');
-        }
-      } catch (e) { /* ignore */ }
-      $carousel.removeClass('slick-initialized slick-slider');
-      $carousel.find('.slick-list, .slick-track, .slick-arrow, .slick-dots').remove();
-      $carousel.find('.slick-slide').contents().unwrap();
-
-      try {
-        $carousel.slick({
-          dots: false,
-          infinite: true,
-          speed: 1000,
-          arrows: true,
-          autoplay: true,
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          loop: true,
-          adaptiveHeight: true,
-          responsive: [
-            { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 3 } },
-            { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 2 } },
-            { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } }
-          ],
-          prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
-          nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>',
-          appendArrows: `#${arrowsId}`
-        });
-      } catch (e) { /* ignore */ }
-
-      setDailyTabLoading(false);
-    }, 300);
-
+    }, 150);
     return () => clearTimeout(timer);
   }, [activeDailyTab]);
 
@@ -337,67 +302,6 @@ const Home = () => {
 
     fetchProducts();
   }, []);
-
-  // Re-initialize carousel when products are loaded
-  useEffect(() => {
-    if (products.length > 0 && window.jQuery && window.jQuery.fn.slick) {
-      const timeoutId = setTimeout(() => {
-        const carausels = ['carausel-4-columns', 'carausel-4-columns-2', 'carausel-4-columns-3'];
-        carausels.forEach((id, index) => {
-          const $carausel = window.jQuery(`#${id}`);
-          if (!$carausel.length) return;
-
-          // Force-clean any leftover slick state
-          try {
-            if ($carausel.hasClass('slick-initialized')) {
-              $carausel.slick('unslick');
-            }
-          } catch (e) { /* ignore */ }
-          $carausel.removeClass('slick-initialized slick-slider');
-          $carausel.find('.slick-list, .slick-track, .slick-arrow, .slick-dots').remove();
-          $carausel.find('.slick-slide').contents().unwrap();
-
-          const arrowsId = index === 0 ? 'carausel-4-columns-arrows' :
-                          index === 1 ? 'carausel-4-columns-arrows-2' :
-                          'carausel-4-columns-arrows-3';
-          const $arrowContainer = window.jQuery(`#${arrowsId}`);
-          const hasArrowContainer = $arrowContainer.length > 0;
-
-          const slickConfig = {
-            dots: false,
-            infinite: true,
-            speed: 1000,
-            arrows: true,
-            autoplay: true,
-            slidesToShow: 4,
-            slidesToScroll: 1,
-            loop: true,
-            adaptiveHeight: true,
-            accessibility: false,
-            responsive: [
-              { breakpoint: 1025, settings: { slidesToShow: 3, slidesToScroll: 3 } },
-              { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 2 } },
-              { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } }
-            ],
-            prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-arrow-small-left"></i></span>',
-            nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-arrow-small-right"></i></span>'
-          };
-
-          if (hasArrowContainer) {
-            slickConfig.appendArrows = `#${arrowsId}`;
-          } else {
-            slickConfig.appendArrows = $carausel;
-          }
-
-          try {
-            $carausel.slick(slickConfig);
-          } catch (e) { /* ignore */ }
-        });
-      }, 300);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [products]);
 
   // Fetch categories to build dynamic popular tabs
   useEffect(() => {
@@ -501,18 +405,24 @@ const Home = () => {
     }))
     : staticHeroSlides;
 
+  // Sole initializer for the hero slider — self-polls for jQuery/Slick
   useEffect(() => {
-    if (!window.jQuery || !window.jQuery.fn.slick) return;
-
-    const timer = setTimeout(() => {
+    const timers = [];
+    let attempts = 0;
+    const tryInitHero = () => {
+      attempts++;
+      if (!window.jQuery || !window.jQuery.fn.slick) {
+        if (attempts < 20) timers.push(setTimeout(tryInitHero, 200));
+        return;
+      }
       const $heroSlider = window.jQuery('.hero-slider-1');
       if (!$heroSlider.length) return;
 
-      try {
-        if ($heroSlider.hasClass('slick-initialized')) {
-          $heroSlider.slick('unslick');
-        }
-      } catch (e) { /* ignore */ }
+      try { if ($heroSlider.hasClass('slick-initialized')) { $heroSlider.slick('unslick'); } } catch (e) { /* ignore */ }
+      $heroSlider.removeClass('slick-initialized slick-slider');
+      $heroSlider.find('.slick-list, .slick-track, .slick-arrow, .slick-dots').remove();
+      $heroSlider.find('.slick-slide').contents().unwrap();
+      $heroSlider.removeAttr('role tabindex');
 
       try {
         $heroSlider.slick({
@@ -530,9 +440,9 @@ const Home = () => {
           adaptiveHeight: false
         });
       } catch (e) { /* ignore */ }
-    }, 200);
-
-    return () => clearTimeout(timer);
+    };
+    timers.push(setTimeout(tryInitHero, 100));
+    return () => timers.forEach(clearTimeout);
   }, [heroSlides.length]);
 
 
@@ -544,7 +454,7 @@ const Home = () => {
           <div className="row">
             <div className="col-xl-8 col-lg-12">
               <div className="home-slide-cover">
-                <div className="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1" ref={heroSliderRef} key="hero-slider">
+                <div className="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1" ref={heroSliderRef} key={heroSlides.map(s => s.id).join(',')}>
                   {heroSlides.map((slide) => (
                     <div
                       key={slide.id}
@@ -876,26 +786,24 @@ const Home = () => {
               </div>
             </div>
             <div className="col-lg-9 col-md-12" style={{ position: 'relative' }}>
-              {dailyTabLoading && (
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  minHeight: '400px'
-                }}>
-                  <div className="spinner-border text-success" role="status" style={{ width: '3rem', height: '3rem' }}>
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+              <div ref={loadingOverlayRef} style={{
+                display: 'none',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                minHeight: '400px'
+              }}>
+                <div className="spinner-border text-success" role="status" style={{ width: '3rem', height: '3rem' }}>
+                  <span className="visually-hidden">Loading...</span>
                 </div>
-              )}
-              <div className="tab-content" id="myTabContent-1" style={{ opacity: dailyTabLoading ? 0.3 : 1, transition: 'opacity 0.3s ease' }}>
+              </div>
+              <div className="tab-content" id="myTabContent-1" ref={tabContentRef} style={{ transition: 'opacity 0.3s ease' }}>
                 <div className={`tab-pane fade ${activeDailyTab === 'featured' ? 'show active' : ''}`} id="tab-one-1" role="tabpanel" aria-labelledby="tab-one-1">
                   {(() => {
                     const featuredProducts = products.slice(0, 6);
@@ -911,7 +819,7 @@ const Home = () => {
                     return (
                   <div className="carausel-4-columns-cover arrow-center position-relative">
                     <div className="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-arrows"></div>
-                    <div className="carausel-4-columns carausel-arrow-center" id="carausel-4-columns" ref={carausel4ColumnsRef} key="carausel-4-1">
+                    <SlickCarousel id="carausel-4-columns" arrowsId="carausel-4-columns-arrows" className="carausel-4-columns carausel-arrow-center">
                       {featuredProducts.map((product, index) => (
                         <div key={product.id} className="product-cart-wrap">
                           <div className="product-img-action-wrap" style={{ position: 'relative' }}>
@@ -981,7 +889,7 @@ const Home = () => {
                           </div>
                         </div>
                       ))}
-                    </div>
+                    </SlickCarousel>
                   </div>
                     );
                   })()}
@@ -1001,7 +909,7 @@ const Home = () => {
                     return (
                       <div className="carausel-4-columns-cover arrow-center position-relative">
                         <div className="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-arrows-2"></div>
-                        <div className="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-2">
+                        <SlickCarousel id="carausel-4-columns-2" arrowsId="carausel-4-columns-arrows-2" className="carausel-4-columns carausel-arrow-center">
                           {popularProducts.map((product, index) => (
                             <div key={product.id} className="product-cart-wrap">
                               <div className="product-img-action-wrap" style={{ position: 'relative' }}>
@@ -1028,7 +936,7 @@ const Home = () => {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </SlickCarousel>
                       </div>
                     );
                   })()}
@@ -1048,7 +956,7 @@ const Home = () => {
                     return (
                       <div className="carausel-4-columns-cover arrow-center position-relative">
                         <div className="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-arrows-3"></div>
-                        <div className="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-3">
+                        <SlickCarousel id="carausel-4-columns-3" arrowsId="carausel-4-columns-arrows-3" className="carausel-4-columns carausel-arrow-center">
                           {newProducts.map((product, index) => (
                             <div key={product.id} className="product-cart-wrap">
                               <div className="product-img-action-wrap" style={{ position: 'relative' }}>
@@ -1075,7 +983,7 @@ const Home = () => {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </SlickCarousel>
                       </div>
                     );
                   })()}

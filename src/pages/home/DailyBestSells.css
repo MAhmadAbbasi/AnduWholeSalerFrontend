@@ -253,25 +253,12 @@
   }
 }
 
-/* Enhanced slick carousel styles */
+/* Slick carousel — do NOT override track display or margins; slick sets these via JS */
 .daily-best-sells-section .slick-slider {
   position: relative;
 }
 
-.daily-best-sells-section .slick-list {
-  margin: 0 -15px;
-  padding: 0;
-}
-
-.daily-best-sells-section .slick-track {
-  display: flex;
-  margin: 0;
-  padding: 0;
-}
-
 .daily-best-sells-section .slick-slide {
-  padding: 0 15px;
-  margin: 0;
   transition: opacity 0.4s ease;
 }
 

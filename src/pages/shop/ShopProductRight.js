@@ -5,7 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCompare } from '../../context/CompareContext';
 import { getClothingImage, getUnsplashFallback, getImageUrl } from '../../utils/imageUtils';
-import { useSafeHtml } from '../../utils/sanitizeHtml';
+import { getSafeHtml } from '../../utils/sanitizeHtml';
 import VideoImage from '../../components/common/VideoImage';
 import './ShopProductRight.css';
 
@@ -940,7 +940,7 @@ const ShopProductRight = () => {
                         </div>
 
                         <div className="short-desc mb-30">
-                          <div className="font-lg" style={{ lineHeight: '1.6', color: '#555' }} dangerouslySetInnerHTML={useSafeHtml(displayProduct.description)} />
+                          <div className="font-lg" style={{ lineHeight: '1.6', color: '#555' }} dangerouslySetInnerHTML={getSafeHtml(displayProduct.description)} />
                         </div>
 
                         {displayProduct.unit && (
@@ -1162,7 +1162,7 @@ const ShopProductRight = () => {
                         <div className={`tab-pane fade ${activeTab === 'Description' ? 'show active' : ''}`} id="Description">
                           <div>
                             <h5 className="mb-20">Product Overview</h5>
-                            <div style={{ lineHeight: '1.8', color: '#666' }} dangerouslySetInnerHTML={useSafeHtml(displayProduct.description)} />
+                            <div style={{ lineHeight: '1.8', color: '#666' }} dangerouslySetInnerHTML={getSafeHtml(displayProduct.description)} />
 
                             <div className="mt-30">
                               <h5 className="mb-20">Key Features & Specifications</h5>

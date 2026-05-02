@@ -208,7 +208,21 @@ const ProgressiveLoader = () => {
         'jquery.vticker-min.js'
       );
     }).then(() => {
-      // Set flag to prevent carousel auto-init conflicts
+      // Wrap $.fn.slick BEFORE main.js so it can't re-initialize carousels
+      // that React's SlickCarousel already owns (avoids throw + config overwrite).
+      // String method calls (unslick, setPosition, refresh) are always allowed.
+      if (window.jQuery && window.jQuery.fn.slick) {
+        const _origSlick = window.jQuery.fn.slick;
+        window.jQuery.fn.slick = function(...args) {
+          if (typeof args[0] === 'string') return _origSlick.apply(this, args);
+          if (this.length > 0 && this[0].classList.contains('slick-initialized')) return this;
+          if (this.length > 0 && this[0].parentElement) {
+            try { return _origSlick.apply(this, args); } catch (e) { return this; }
+          }
+          return this;
+        };
+      }
+
       window.preventSlickAutoInit = true;
 
       // 13. Now load main.js (all required plugins should be loaded)
@@ -217,6 +231,10 @@ const ProgressiveLoader = () => {
       // 14. Load shop.js (slick and elevateZoom should be loaded)
       return loadScript('/assets/js/shop.js?v=6.1', true);
     }).then(() => {
+      // main.js already ran its init guard at load time — resetting the flag now
+      // unblocks SlickCarousel's own $.fn.slick calls without re-triggering main.js carousels.
+      window.preventSlickAutoInit = false;
+
       // Load other background scripts asynchronously (won't block page)
       backgroundScripts.forEach((src) => {
         loadScript(src, false).catch(err => 

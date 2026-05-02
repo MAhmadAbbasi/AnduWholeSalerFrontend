@@ -90,9 +90,6 @@ const Header = () => {
                 };
                 
                 // Debug logging
-                if (nestedSubCategory1s.length > 0) {
-                  console.log(`SubCategory ${subCatWithSub1s.name} (${subCatWithSub1s.id}) has ${nestedSubCategory1s.length} subCategory1s:`, nestedSubCategory1s.map(s => s.name));
-                }
                 
                 return subCatWithSub1s;
               });

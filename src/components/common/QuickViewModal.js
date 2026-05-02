@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl, getUnsplashFallback } from '../../utils/imageUtils';
-import { useSafeHtml } from '../../utils/sanitizeHtml';
+import { getSafeHtml } from '../../utils/sanitizeHtml';
 import { useQuickView } from '../../context/QuickViewContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -27,13 +27,13 @@ const QuickViewModal = () => {
     }
   }, [selectedProduct]);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     const elem = e.currentTarget;
     const { top, left, width, height } = elem.getBoundingClientRect();
     const x = ((e.pageX - left - window.pageXOffset) / width) * 100;
     const y = ((e.pageY - top - window.pageYOffset) / height) * 100;
     setMagnifierPosition({ x, y });
-  };
+  }, []);
 
   if (!selectedProduct) {
     return (
@@ -223,7 +223,7 @@ const QuickViewModal = () => {
                   </div>
                   {description && (
                     <div className="short-desc mb-4">
-                      <div className="font-md" style={{ color: '#7E7E7E', lineHeight: '1.6' }} dangerouslySetInnerHTML={useSafeHtml(description)} />
+                      <div className="font-md" style={{ color: '#7E7E7E', lineHeight: '1.6' }} dangerouslySetInnerHTML={getSafeHtml(description)} />
                     </div>
                   )}
                   <div className="detail-extralink mb-4">
