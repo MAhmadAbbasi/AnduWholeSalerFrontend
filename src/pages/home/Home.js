@@ -651,7 +651,7 @@ const Home = () => {
             <div className="col-lg-3 d-none d-lg-flex">
               <div className="banner-img style-2">
                 <div className="banner-text">
-                  <h2 className="mb-100">Bring nature into your home</h2>
+                  <h2 className="mb-100">Every thing you need at one place</h2>
                   <Link to="/shop" className="btn btn-xs">Shop Now <i className="fi-rs-arrow-small-right"></i></Link>
                 </div>
               </div>
